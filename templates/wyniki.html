@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block title %}Kalkulator v2{% endblock %}
+
+
+
+{% block submenu %}
+
+  <h2>  <a href="menu_pkw">Powrót do menu</a></h2>
+
+
+{% endblock %}
+{% block content %}
+Frekwencja: {{frekwencja[0]}}
+   <table >
+<tr>
+   		<td>
+    <p> Numer okręgu <br> wyborczego </p>
+</td>
+<td>
+    <p> Lokalizacja</p>
+</td>
+<td>
+    <p> Komisarz</p>
+</td>
+   <tr>
+   {% for okreg in okregi %}
+   	<tr>
+   		<td>
+    <p> <a href="{{url_for('protokol_okreg', numer=okreg[0])}}">{{okreg[0]}}</a></p>
+</td>
+<td>
+    <p> {{okreg[1]}}</p>
+</td>
+<td>
+    <p> {{okreg[2]}}</p>
+</td>
+   {% endfor %}
+   <tr>
+</table>
+
+
+
+{% endblock %}

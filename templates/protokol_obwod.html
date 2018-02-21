@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+{% block title %}Kalkulator v2{% endblock %}
+
+
+{% block akcja %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+Okręg nr {{obwod[0]}}, obwód nr {{obwod[1]}}, {{obwod[2]}},
+Wprowadził członek komisji: {{obwod[4] }} {{obwod[5]}}
+<h1> Wyniki wyborów na listy </h1>
+<table >
+<tr>
+        <td>
+    <p> Numer<br> listy </p>
+</td>
+<td>
+    <p> Nazwa</p>
+</td>
+<td>
+    <p> Liczba <br> głosów</p>
+</td>
+   <tr>
+   {% for komitet in komitety %}
+    <tr>
+        <td>
+    <p> {{komitet[0]}}</p>
+</td>
+<td>
+    <p> {{komitet[1]}}</p>
+</td>
+<td>
+    <p> {{komitet[2]}}</p>
+</td>
+   {% endfor %}
+   <tr>
+</table>
+
+<h1> Wyniki wyborów na kandydatów </h1>
+
+<table >
+<tr>
+  <td>
+    <p> Numer<br> listy </p>
+</td>
+        <td>
+    <p> ID <br> kandydata </p>
+</td>
+<td>
+    <p> Komitet <br> wyborczy</p>
+</td>
+<td>
+    <p> Imię</p>
+</td>
+<td>
+    <p> Nazwisko</p>
+</td>
+<td>
+    <p> Liczba <br> głosów</p>
+</td>
+<td>
+    <p> Liczba <br> głosów</p>
+</td>
+   <tr>
+   {% for element in protokol %}
+    <tr>
+        <td>
+    <p> {{element[0]}}</p>
+</td>
+<td>
+    <p> {{element[1]}}</p>
+</td>
+<td>
+    <p> {{element[2]}}</p>
+</td>
+<td>
+    <p> {{element[3]}}</p>
+</td>
+<td>
+    <p> {{element[4]}}</p>
+</td>
+<td>
+    <p> {{element[5]}}</p>
+</td>
+<td>
+    <p> {{'%0.2f'| format(wyniki[element[1]] |float)}}%</p>
+</td>
+   {% endfor %}
+   <tr>
+</table>
+Frekwencja: {{frekwencja}} <br>
+Członek komisji: {{obwod[4] }} {{obwod[5]}} <br> /podpis/
+{% endblock %}

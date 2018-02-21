@@ -53,7 +53,8 @@ def komisja(kursor,  idczlonek_komisji,  idobwod_wyborczy):
 	# kursor.execute("""INSERT into obwod_wyborczy (idKandydat, idokreg_wyborczy, liczba_glosow) values ( %s, %s, %s)""",(idKandydat, idokreg_wyborczy, liczba_glosow))
 
 def kandydat_w_obwodzie (kursor, idKandydat, idobwod_wyborczy, liczba_glosow):
-	kursor.execute("""INSERT into kandydat_w_obwodzie (idKandydat, idobwod_wyborczy, liczba_glosow) values ( %s, %s, %s)""",(idKandydat, idobwod_wyborczy, liczba_glosow))
+	kursor.execute("""UPDATE kandydat_w_obwodzie set (liczba_glosow) = (%s)
+		WHERE idkandydat = (%s) and idobwod_wyborczy = (%s) """,(liczba_glosow, idKandydat, idobwod_wyborczy))
 
 def glosy_w_okregu(kursor, idokreg):
 	kursor.execute("""SELECT * FROM policz_glosy_w_okregu(%s);""",(idokreg,))

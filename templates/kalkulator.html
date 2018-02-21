@@ -7,22 +7,12 @@
   </style>
 {% endblock %}
 {% block content %}
-  <h1>    Ekran logowania systemu Kalkulator v2!</h1>
+  <h1>    Logowanie PKW </h1>
   <p class="important">
    <h2>  <a href="menu_pkw">PKW</a></h2>
    
-<h1>Numer okręgu:</h1>
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.numer.label }}<br>
-            {{ form.numer(size=32) }}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
-
-
-   <table >
+<h1>Logowanie komisarza okręgu:</h1>
+<table >
 <tr>
       <td>
     <p> Numer okręgu <br> wyborczego </p>
@@ -48,15 +38,38 @@
    {% endfor %}
    <tr>
 </table>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.numer.label }}<br>
+            {{ form.numer(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+
+<h1>Logowanie członka obwodowej komisji wyborczej:</h1>
 
 
-
-
-    Numer Okręgu
-    Zaloguj
-    Id Członka Komisji
-    Zaloguj
-    Pierożki
+   <table >
+<tr>
+      <td>
+    <p> ID członka <br> komisji</p>
+</td>
+<td>
+    <p> Imię i nazwisko</p>
+</td>
+   <tr>
+   {% for k in okw %}
+    <tr>
+      <td>
+    <p> <a href="{{url_for('menu_obwod', numer=k[1])}}">{{k[3]}}</a></p>
+</td>
+<td>
+    <p> {{k[4]}} {{k[5]}}</p>
+</td>
+   {% endfor %}
+   <tr>
+</table>
 
 
 {% endblock %}

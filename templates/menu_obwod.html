@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block title %}Kalkulator v2{% endblock %}
+
+{% block submenu %}
+  <h1>Menu członka komisji:</h1>
+  <p class="important">
+     <h2><a href="{{url_for('kalkulator')}}">Powrót do ekranu logwania</a></h2>
+     <h2><a href="{{url_for('dodaj_wyniki_obwod', numer=numer)}}">Dodaj wyniki</a></h2>
+     <h2><a href="{{url_for('protokol_obwod', numer=numer)}}">Wyświetl protokół</a></h2>
+
+<h1>okręg nr {{obwod[0]}}, obwód nr {{obwod[1]}}, {{obwod[2]}}.</h1>
+{% endblock %}
+
+{% block content %}
+
+<h1>Członek komisji: {{obwod[4]}} {{obwod[5]}}, obwód nr {{obwod[1]}}, {{obwod[2]}}. </h1>
+
+{% endblock %}

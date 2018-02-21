@@ -32,13 +32,13 @@ def kandydat(kursor, id):
 	kursor.execute("""DELETE FROM kandydat 
 		WHERE idkandydat = (%s);""",(id,))
 
-def sklad_komisji(kursor, idczlonek_komisji,  idobwod_wyborczy ,  idprzewodniczacego ):
-	kursor.execute("""DELETE FROM sklad_komisji (idczlonek_komisji, idprzewodniczacego)  (%s, %s, %s) 
-		WHERE idobwod_wyborczy = (%s);""",(idczlonek_komisji, idprzewodniczacego, idobwod_wyborczy))
+# def sklad_komisji(kursor, idczlonek_komisji,  idobwod_wyborczy ,  idprzewodniczacego ):
+# 	kursor.execute("""DELETE FROM sklad_komisji (idczlonek_komisji, idprzewodniczacego)  (%s, %s, %s) 
+# 		WHERE idobwod_wyborczy = (%s);""",(idczlonek_komisji, idprzewodniczacego, idobwod_wyborczy))
 
 # def kandydat_w_okregu (kursor, idKandydat, idokreg_wyborczy, liczba_glosow):
 	# kursor.execute("""DELETE FROM obwod_wyborczy (idKandydat, idokreg_wyborczy, liczba_glosow)  ( %s, %s, %s) WHERE id""",(idKandydat, idokreg_wyborczy, liczba_glosow))
 
-def kandydat_w_obwodzie (kursor, idKandydat, idobwod_wyborczy):
-	kursor.execute("""DELETE FROM kandydat_w_obwodzie
-		WHERE idkandydat = (%s) and idobwod_wyborczy = (%s); """,( idKandydat, idobwod_wyborczy,))
+# def kandydat_w_obwodzie (kursor, idKandydat, idobwod_wyborczy):
+# 	kursor.execute("""DELETE FROM kandydat_w_obwodzie
+# 		WHERE idkandydat = (%s) and idobwod_wyborczy = (%s); """,( idKandydat, idobwod_wyborczy,))

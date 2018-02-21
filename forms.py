@@ -55,10 +55,6 @@ class OkregZaloguj(FlaskForm):
     numer = IntegerField('Numer okręgu',validators=[DataRequired()])
     submit = SubmitField('Zaloguj')
 
-class ObwodZaloguj(FlaskForm):
-    numer = IntegerField('Numer obwodu',validators=[DataRequired()])
-    submit = SubmitField('Zaloguj')
-
 class DodajObwod(FlaskForm):
     lokalizacja = StringField('Lokalizacja', validators=[DataRequired()])
     imie = StringField('Imię przewodniczącego', validators=[DataRequired()])
@@ -74,6 +70,15 @@ class EdytujObwod(FlaskForm):
     nazwisko = StringField('Nowe nazwisko przewodniczącego', validators=[Optional()])
     afiliacja = StringField('Nowa afiliacja przewodniczącego', validators=[Optional()])
     lokalizacja = StringField('Nowa lokalizacja', validators=[Optional()])
+    submit = SubmitField('Dodaj')
+
+class ObwodZaloguj(FlaskForm):
+    numer = IntegerField('ID członka komisji',validators=[DataRequired()])
+    submit = SubmitField('Zaloguj')
+
+class DodajGlosy(FlaskForm):
+    id = IntegerField('ID kandydata',validators=[DataRequired()])
+    glosy = IntegerField('Liczba głosów',validators=[DataRequired()])
     submit = SubmitField('Dodaj')
 
 class Usun(FlaskForm):

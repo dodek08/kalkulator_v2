@@ -14,7 +14,7 @@ app.config.from_object(Config)
 
 
 @app.route('/', methods=['GET', 'POST'])
-def hello():
+def kalkulator():
     form = forms.OkregZaloguj(request.form)
     if request.method == 'POST' and form.validate():
         conn = polacz()
@@ -24,12 +24,77 @@ def hello():
         numery = [numer[0] for numer in okregi] # lista = [element 0 krotki dla elementu w liscie]
         if form.numer.data in numery:
             return redirect(url_for('menu_komisarz',numer=form.numer.data))
+
+    conn = polacz()
+    kursor = conn.cursor()
+    kursor.execute("""SELECT * FROM okw;""")
+    okw = kursor.fetchall()
+    kursor.execute("SELECT * FROM okreg_wyborczy ORDER BY idokreg_wyborczy;")
+    okregi = kursor.fetchall()
+    kursor.execute("SELECT * FROM okw;")
+    okw = kursor.fetchall()
+    conn.close()
+    return render_template('kalkulator.html', form=form, okregi=okregi, okw=okw)
+
+@app.route('/wyniki')
+def wyniki():
     conn = polacz()
     kursor = conn.cursor()
     kursor.execute("SELECT * FROM okreg_wyborczy ORDER BY idokreg_wyborczy;")
     okregi = kursor.fetchall()
+    kursor.execute("select sum(sum) from frekwencja_w_obwodach;")
+    frekwencja = kursor.fetchone()
     conn.close()
-    return render_template('kalkulator.html', form=form, okregi=okregi)
+    return render_template('wyniki.html',okregi=okregi, frekwencja=frekwencja)
+
+
+@app.route('/menu_obwod/<numer>')
+def menu_obwod(numer):
+    conn=polacz()
+    kursor=conn.cursor()
+    kursor.execute("""SELECT * FROM okw WHERE idobwod_wyborczy = (%s);""", (numer,))
+    obwod= kursor.fetchone()
+    conn.close()
+    return render_template('menu_obwod.html', numer=numer, obwod=obwod)
+
+@app.route('/dodaj_wyniki_obwod/<numer>', methods=['GET', 'POST'])
+def dodaj_wyniki_obwod(numer):
+    form = forms.DodajGlosy(request.form)
+    if request.method == 'POST' and form.validate():
+        conn = polacz()
+        kursor = conn.cursor()
+        insert.kandydat_w_obwodzie(kursor, form.id.data, numer, form.glosy.data)
+        conn.commit()
+        conn.close()
+        flash("Dodano!")
+        return redirect(url_for('dodaj_wyniki_obwod',numer=numer))
+    conn=polacz()
+    kursor=conn.cursor()
+    kursor.execute("""SELECT * FROM okw WHERE idobwod_wyborczy = (%s);""", (numer,))
+    obwod= kursor.fetchone()
+    kursor.execute("""SELECT * FROM protokol_w_obwodzie WHERE idobwod_wyborczy = (%s);""", (numer,))
+    protokol = kursor.fetchall()
+    conn.close()
+    return render_template('dodaj_wyniki_obwod.html', form=form, numer=numer, obwod=obwod, protokol=protokol)
+
+#http://samorzad2014.pkw.gov.pl/321_protokol_komisji_obwodowej/22942/rdw_3
+@app.route('/protokol_obwod/<numer>')
+def protokol_obwod(numer):
+    conn=polacz()
+    kursor=conn.cursor()
+    kursor.execute("""SELECT * FROM okw WHERE idobwod_wyborczy = (%s);""", (numer,))
+    obwod= kursor.fetchone()
+    kursor.execute("""SELECT * FROM protokol_w_obwodzie WHERE idobwod_wyborczy = (%s);""", (numer,))
+    protokol = kursor.fetchall()
+    kursor.execute("""select * from frekwencja_w_obwodach where idobwod_wyborczy = (%s);""",(numer,))
+    frekwencja = kursor.fetchone()
+    kursor.execute("""SELECT idkomitet, nazwa_komitetu, sum(liczba_glosow) FROM protokol_w_obwodzie where idobwod_wyborczy = (%s)
+     GROUP BY idkomitet, nazwa_komitetu ORDER BY idkomitet;""",(numer,))
+    komitety = kursor.fetchall()
+    wyniki = {element[1]: element[5]/frekwencja[1]*100 for element in protokol}
+    conn.close()
+    return render_template('protokol_obwod.html', numer=numer, obwod=obwod,
+     protokol=protokol, frekwencja=frekwencja[1], komitety=komitety, wyniki=wyniki)
 
 
 @app.route('/menu_pkw')
@@ -175,7 +240,7 @@ def dodaj_kandydata(numer):
         conn.commit()
         conn.close()
         flash("Dodano!")
-        return redirect('dodaj_kandydata')
+        return redirect(url_for('dodaj_kandydata',numer=numer))
     conn = polacz()
     kursor = conn.cursor()
     kursor.execute("""SELECT kom.nazwa_komitetu, k.idkandydat, k.imie, k.nazwisko from kandydat k
@@ -259,6 +324,31 @@ def menu_komisarz(numer):
     okreg = kursor.fetchone()
     conn.close()
     return render_template('menu_komisarz.html', numer=okreg[0], komisarz=okreg[2], lokalizacja=okreg[1])
+
+#http://samorzad2014.pkw.gov.pl/357_rady_woj/0/2604
+@app.route('/protokol_okreg/<numer>')
+def protokol_okreg(numer):
+    conn=polacz()
+    kursor=conn.cursor()
+    kursor.execute("""SELECT * FROM policz_glosy_w_okregu(%s)""",(numer,))
+    conn.commit()
+    kursor.execute("""SELECT * FROM protokol_w_okregu WHERE idokreg_wyborczy = (%s);""", (numer,))
+    protokol = kursor.fetchall()
+    kursor.execute("""SELECT * FROM frekwencja_w_obwodach WHERE idokreg_wyborczy = (%s);""",(numer,))
+    frekwencja = kursor.fetchall()
+    kursor.execute("""SELECT sum(sum) FROM frekwencja_w_obwodach WHERE idokreg_wyborczy = (%s);""",(numer,))
+    frekwencja_w_okregu = kursor.fetchone()
+    kursor.execute("""SELECT idkomitet, nazwa_komitetu, sum(liczba_glosow) FROM protokol_w_okregu where idokreg_wyborczy = (%s)
+     GROUP BY idkomitet, nazwa_komitetu ORDER BY idkomitet;""",(numer,))
+    komitety = kursor.fetchall()
+    kursor.execute("""SELECT * FROM okreg_wyborczy WHERE idokreg_wyborczy = (%s);""",(numer,))
+    okreg = kursor.fetchone()
+    wyniki = {element[1]: element[5]/frekwencja_w_okregu[0]*100 for element in protokol}
+    print(frekwencja)
+    conn.close()
+    return render_template('protokol_okreg.html', numer=numer,
+     protokol=protokol, frekwencja=frekwencja, komitety=komitety, frekwencja_w_okregu=frekwencja_w_okregu[0],
+     komisarz=okreg[2], lokalizacja=okreg[1], wyniki = wyniki)
 
 @app.route('/obwody_menu/<idokregu>')
 def obwody_menu(idokregu):
