@@ -1,1 +1,1 @@
-web: gunicorn app:kalkulator --log-file=-
+web: gunicorn kalkulator:app --log-file=-
