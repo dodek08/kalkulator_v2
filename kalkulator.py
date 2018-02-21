@@ -99,14 +99,18 @@ def protokol_obwod(numer):
 
 @app.route('/menu_pkw')
 def menu_pkw():
-    return render_template('menu_pkw.html')
+    conn=polacz()
+    kursor=conn.cursor()
+    kursor.execute("""SELECT * FROM liczenie_glosow_kandydaci""")
+    zmiany= kursor.fetchall()
+    conn.close()
+    return render_template('menu_pkw.html',zmiany=zmiany)
 
 @app.route('/okregi',methods=['GET', 'POST'])
 def okregi():
     form = forms.DodajOkreg(request.form)
     if request.method == 'POST' and form.validate():
         Okreg = {"lokalizacja":form.lokalizacja.data, "komisarz":form.komisarz.data}
-        
         conn = polacz()
         kursor = conn.cursor()
         insert.okreg_wyborczy(kursor, Okreg["lokalizacja"],Okreg["komisarz"])

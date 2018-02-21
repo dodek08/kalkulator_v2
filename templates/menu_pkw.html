@@ -9,3 +9,58 @@
      <h2><a href="wyniki">Wyniki</a></h2>
 
 {% endblock %}
+
+{% block akcja %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
+<h1>Nadużycia: </h1>
+<table >
+<tr>
+        <td>
+    <p> Numer<br> kandydata </p>
+</td>
+<td>
+    <p> Liczba głosów <br> przed zmianą</p>
+</td>
+
+<td>
+    <p> Liczba głosów <br> po zmianie</p>
+</td>
+
+<td>
+    <p> Data zmiany</p>
+</td>
+   <tr>
+   {% for zmiana in zmiany %}
+    <tr>
+        <td>
+    <p> {{zmiana[0]}}</p>
+</td>
+<td>
+    <p> {{zmiana[1]}}</p>
+</td>
+
+<td>
+    <p> {{zmiana[2]}}</p>
+</td>
+
+<td>
+    <p> {{zmiana[3]}}</p>
+</td>
+   {% endfor %}
+   <tr>
+</table>
+
+
+{% endblock %}
+
