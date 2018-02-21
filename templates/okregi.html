@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block title %}Kalkulator v2{% endblock %}
+
+{% block submenu %}
+
+  <h2>  <a href="menu_pkw">Powrót do menu</a></h2>
+<h2>  <a href="zobacz_okregi">Zobacz okręgi</a></h2>
+<h2>  <a href="okregi">Dodaj okręgi</a></h2>
+<h2>  <a href="edytuj_okreg">Edytuj okręgi</a></h2>
+
+
+{% endblock %}
+{% block akcja %}
+    <h1>Dodaj okręg wyborczy:</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.lokalizacja.label }}<br>
+            {{ form.lokalizacja(size=32) }}
+        </p>
+        <p>
+            {{ form.komisarz.label }}<br>
+            {{ form.komisarz(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+
+{% endblock %}
+{% block content %}
+<table >
+<tr>
+        <td>
+    <p> Numer okręgu <br> wyborczego </p>
+</td>
+<td>
+    <p> Lokalizacja</p>
+</td>
+<td>
+    <p> Komisarz</p>
+</td>
+   <tr>
+   {% for okreg in okregi %}
+    <tr>
+        <td>
+    <p> {{okreg[0]}}</p>
+</td>
+<td>
+    <p> {{okreg[1]}}</p>
+</td>
+<td>
+    <p> {{okreg[2]}}</p>
+</td>
+   {% endfor %}
+   <tr>
+</table>
+
+
+{% endblock %}

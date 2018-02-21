@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% block title %}Kalkulator v2{% endblock %}
+
+{% block submenu %}
+  <h1>Kandydaci</h1>
+  <p class="important">
+     <h2><a href="menu_pkw">Powrót do menu</a></h2>
+     <h1>Dodawanie, edycja i usuwanie kandydatów odbywa się w okręgach!</h1>
+
+{% endblock %}
+{% block akcja %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+{% endblock %}
+{% block content %}
+
+<table >
+<tr>
+  <td>
+    <p> Nazwa<br> komitetu </p>
+</td>
+        <td>
+    <p> ID <br> kandydata </p>
+</td>
+<td>
+    <p> Imię</p>
+</td>
+<td>
+    <p> Nazwisko</p>
+</td>
+   <tr>
+   {% for kandydat in kandydaci %}
+    <tr>
+        <td>
+    <p> {{kandydat[0]}}</p>
+</td>
+<td>
+    <p> {{kandydat[1]}}</p>
+</td>
+<td>
+    <p> {{kandydat[2]}}</p>
+</td>
+<td>
+    <p> {{kandydat[3]}}</p>
+</td>
+   {% endfor %}
+   <tr>
+</table>
+
+
+{% endblock %}

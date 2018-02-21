@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+{% block title %}Kalkulator v2{% endblock %}
+
+{% block submenu %}
+  <h1>Kandydaci</h1>
+  <p class="important">
+     <h2><a href="{{url_for('menu_komisarz', numer=numer)}}">Powrót do menu komisarza</a></h2>
+     <h2><a href="{{url_for('zobacz_kandydata_okreg', numer=numer)}}">Kandydaci</a></h2>
+     <h2><a href="{{url_for('dodaj_kandydata', numer=numer)}}">Dodaj kandydata</a></h2>
+     <h2><a href="{{url_for( 'edytuj_kandydata', numer = numer)}}">Edytuj kandydata</a></h2>
+     <h2><a href="usun_kandydata">Usuń kandydata</a></h2>
+     <h1>Okręg nr {{numer}}, {{lokalizacja}}.</h1>
+
+{% endblock %}
+{% block akcja %}
+<h3>Najpierw upewnij się, że są dodane wszystkie obwody!!!</h3>
+    <h1>Dodaj kandydata:</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.imie.label }}<br>
+            {{ form.imie(size=32) }}
+        </p>
+        <p>
+            {{ form.nazwisko.label }}<br>
+            {{ form.nazwisko(size=32) }}
+        </p>
+        <p>
+            {{ form.numer_listy.label }}<br>
+            {{ form.numer_listy(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<table >
+<tr>
+        <td>
+    <p> Numer <br> listy </p>
+</td>
+<td>
+    <p> Nazwa</p>
+</td>
+   <tr>
+   {% for komitet in komitety %}
+    <tr>
+        <td>
+    <p> {{komitet[0]}}</p>
+</td>
+<td>
+    <p> {{komitet[1]}}</p>
+</td>
+   {% endfor %}
+   <tr>
+</table>
+
+{% endblock %}
+{% block content %}
+<table >
+<tr>
+  <td>
+    <p> Nazwa<br> komitetu </p>
+</td>
+        <td>
+    <p> ID <br> kandydata </p>
+</td>
+<td>
+    <p> Imię</p>
+</td>
+<td>
+    <p> Nazwisko</p>
+</td>
+   <tr>
+   {% for kandydat in kandydaci %}
+    <tr>
+        <td>
+    <p> {{kandydat[0]}}</p>
+</td>
+<td>
+    <p> {{kandydat[1]}}</p>
+</td>
+<td>
+    <p> {{kandydat[2]}}</p>
+</td>
+<td>
+    <p> {{kandydat[3]}}</p>
+</td>
+   {% endfor %}
+   <tr>
+</table>
+
+
+{% endblock %}

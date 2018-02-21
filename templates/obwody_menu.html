@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %}Kalkulator v2{% endblock %}
+
+{% block submenu %}
+  <h1>Menu komisarza:</h1>
+  <p class="important">
+     <h2><a href="{{url_for('menu_komisarz', numer=numer)}}">Powrót do menu komisarza</a></h2>
+     <h2><a href="{{url_for('zobacz_obwod', idokregu=numer)}}">Obwody</a></h2>
+     <h2><a href="{{url_for('dodaj_obwod', idokregu=numer)}}">Dodaj obwód</a></h2>
+     <h2><a href="{{url_for('edytuj_obwod', idokregu=numer)}}">Edytuj obwod</a></h2>
+
+okręg nr {{numer}}, {{lokalizacja}}.
+{% endblock %}
+
+{% block content %}
+
+<h1>Komisarz: {{komisarz}}, okręg nr: {{numer}}, {{lokalizacja}}. </h1>
+
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+{% block title %}Kalkulator v2{% endblock %}
+
+{% block submenu %}
+  <h1>Menu komisarza:</h1>
+  <p class="important">
+     <h2><a href="{{url_for('menu_komisarz', numer=numer)}}">Powrót do menu komisarza</a></h2>
+     <h2><a href="{{url_for('zobacz_obwod', idokregu=numer)}}">Obwody</a></h2>
+     <h2><a href="{{url_for('dodaj_obwod', idokregu=numer)}}">Dodaj obwód</a></h2>
+     <h2><a href="{{url_for('edytuj_obwod', idokregu=numer)}}">Edytuj obwód</a></h2>
+
+okręg nr {{numer}}, {{lokalizacja}}.
+{% endblock %}
+
+{% block akcja %}
+    <h1>Edytuj obwód wyborczy:</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.id.label }}<br>
+            {{ form.id(size=32) }}
+        </p>
+        <p>
+            {{ form.lokalizacja.label }}<br>
+            {{ form.lokalizacja(size=32) }}
+        </p>
+        <p>
+            {{ form.noweid.label }}<br>
+            {{ form.noweid(size=32) }}
+        </p>
+        <p>
+            {{ form.noweidokregu.label }}<br>
+            {{ form.noweidokregu(size=32) }}
+        </p>
+        <p>
+            {{ form.imie.label }}<br>
+            {{ form.imie(size=32) }}
+        </p><p>
+            {{ form.nazwisko.label }}<br>
+            {{ form.nazwisko(size=32) }}
+        </p><p>
+            {{ form.afiliacja.label }}<br>
+            {{ form.afiliacja(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+    
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% endblock %}
+
+{% block content %}
+
+<table >
+<tr>
+        <td>
+    <p> Numer <br> obwodu </p>
+</td>
+<td>
+    <p> Lokalizacja</p>
+</td>
+<td>
+    <p> ID przewodniczącego</p>
+</td>
+<td>
+    <p> Imię przewodniczącego</p>
+</td>
+<td>
+    <p> Nazwisko przewodniczącego</p>
+</td>
+<td>
+    <p> Afiliacja</p>
+</td>
+   <tr>
+   {% for obwod in obwody %}
+    <tr>
+        <td>
+    <p> {{obwod[0]}}</p>
+</td>
+<td>
+    <p> {{obwod[1]}}</p>
+</td><td>
+    <p> {{obwod[2]}}</p>
+</td><td>
+    <p> {{obwod[3]}}</p>
+</td><td>
+    <p> {{obwod[4]}}</p>
+</td><td>
+    <p> {{obwod[5]}}</p>
+</td>
+   {% endfor %}
+   <tr>
+</table>
+
+
+{% endblock %}

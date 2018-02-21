@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block title %}Kalkulator v2{% endblock %}
+
+{% block submenu %}
+  <h1>Kandydaci</h1>
+  <p class="important">
+     <h2><a href="{{url_for('menu_komisarz', numer=numer)}}">Powrót do menu komisarza</a></h2>
+     <h2><a href="{{url_for('zobacz_kandydata_okreg', numer=numer)}}">Kandydaci</a></h2>
+     <h2><a href="{{url_for('dodaj_kandydata', numer=numer)}}">Dodaj kandydata</a></h2>
+     <h2><a href="{{url_for( 'edytuj_kandydata', numer = numer)}}">Edytuj kandydata</a></h2>
+     <h2><a href="usun_kandydata">Usuń kandydata</a></h2>
+     <h1>Okręg nr {{numer}}, {{lokalizacja}}.</h1>
+
+
+{% endblock %}
+
+{% block content %}
+
+<h1>Komisarz: {{komisarz}}, okręg nr: {{numer}}, {{lokalizacja}}. </h1>
+
+{% endblock %}

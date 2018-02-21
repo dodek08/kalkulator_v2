@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block title %}Kalkulator v2{% endblock %}
+
+{% block submenu %}
+  <h1>Komitety</h1>
+  <p class="important">
+     <h2><a href="komitet_menu">Powrót do menu</a></h2>
+     <h2><a href="zobacz_komitet">Komitety</a></h2>
+     <h2><a href="dodaj_komitet">Dodaj komitet</a></h2>
+     <h2><a href="edytuj_komitet">Edytuj komitet</a></h2>
+     <h2><a href="usun_komitet">Usuń komitet</a></h2>
+
+{% endblock %}
+{% block akcja %}
+    <h1>Dodaj komitet wyborczy:</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.nazwa.label }}<br>
+            {{ form.nazwa(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+    
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% endblock %}
+{% block content %}
+<table >
+<tr>
+        <td>
+    <p> Numer <br> listy </p>
+</td>
+<td>
+    <p> Nazwa</p>
+</td>
+   <tr>
+   {% for komitet in komitety %}
+    <tr>
+        <td>
+    <p> {{komitet[0]}}</p>
+</td>
+<td>
+    <p> {{komitet[1]}}</p>
+</td>
+   {% endfor %}
+   <tr>
+</table>
+
+
+{% endblock %}
