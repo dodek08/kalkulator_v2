@@ -8,6 +8,14 @@ import pprint
 import random
 import generuj
 
+"""
+Plik zawiera obudowane funkcja update. Kilka z nich nie zostało wykorzystanych.
+Bardziej rozbudowane obsługują formularze i w miejsce pustych - bo nieobowiązkowych pól wstawiają stare wartości.
+Przy zmianie ID wykorzystują zamianę w trjkącie na wypadek istnienia rekordu o danym id.
+Po wykorzystaniu każdej funkcji należy na obiekcie połączenia wywołać metodę .commit() oraz .close()
+"""
+
+
 def okreg_wyborczy(kursor, idokreg_wyborczy, nazwa, komisarz):
     kursor.execute("""UPDATE okreg_wyborczy set (Nazwa, Komisarz)= (%s, %s)
      WHERE idokreg_wyborczy=(%s);""",(nazwa, komisarz, idokreg_wyborczy))
@@ -79,9 +87,6 @@ def kandydat(kursor, idkomitet, id, noweid, imie, nazwisko):
 def sklad_komisji(kursor, idczlonek_komisji,  idobwod_wyborczy ,  idprzewodniczacego ):
     kursor.execute("""UPDATE sklad_komisji set (idczlonek_komisji, idprzewodniczacego)  (%s, %s, %s) 
         WHERE idobwod_wyborczy = (%s);""",(idczlonek_komisji, idprzewodniczacego, idobwod_wyborczy))
-
-# def kandydat_w_okregu (kursor, idKandydat, idokreg_wyborczy, liczba_glosow):
-    # kursor.execute("""UPDATE obwod_wyborczy (idKandydat, idokreg_wyborczy, liczba_glosow)  ( %s, %s, %s) WHERE id""",(idKandydat, idokreg_wyborczy, liczba_glosow))
 
 def kandydat_w_obwodzie (kursor, idKandydat, idobwod_wyborczy, liczba_glosow):
     kursor.execute("""UPDATE kandydat_w_obwodzie set (liczba_glosow)  (%s) 

@@ -62,7 +62,10 @@ def kandydat(kursor, idkomitet, imie, nazwisko, numer):
 
 def komisja(kursor,  idczlonek_komisji,  idobwod_wyborczy):
 	kursor.execute("""INSERT into sklad_komisji (idczlonek_komisji,  idobwod_wyborczy) values ( %s, %s)""",(idczlonek_komisji,  idobwod_wyborczy))
-
+"""
+*** kandydat_w_obwodzie *** dodaje głosów tylko w momenci przekazania istniejącej pary wartości idkandydat idobwod_wyborczy.
+Zapobiega to nadużyciom - nie można w obwodzie dodawać głosów nieswoim kandydatom.
+"""
 def kandydat_w_obwodzie (kursor, idKandydat, idobwod_wyborczy, liczba_glosow):
 	kursor.execute("""UPDATE kandydat_w_obwodzie set (liczba_glosow) = (%s)
 		WHERE idkandydat = (%s) and idobwod_wyborczy = (%s) """,(liczba_glosow, idKandydat, idobwod_wyborczy))

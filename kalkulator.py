@@ -8,18 +8,21 @@ import insert
 import update
 from polacz import polacz
 from config import Config
-
+# Inicjalizacja nazwy aplikacji
 app = Flask(__name__)
+#Konfiguracja z obiektu, z pliku config.py
 app.config.from_object(Config)
 
-
+#Każda funkcja odpowiada za jeden widok, ta akurat za główny
 @app.route('/', methods=['GET', 'POST'])
 def kalkulator():
+    #Obsługa formularza z forms.py
     form = forms.OkregZaloguj(request.form)
     if request.method == 'POST' and form.validate():
         conn = polacz()
         kursor = conn.cursor()
         kursor.execute("""SELECT idokreg_wyborczy FROM okreg_wyborczy;""")
+        #Sprawdzenie, czy dany okręg istnieje
         okregi = kursor.fetchall() #lista jednoelementowych krotek
         numery = [numer[0] for numer in okregi] # lista = [element 0 krotki dla elementu w liscie]
         if form.numer.data in numery:
@@ -27,16 +30,18 @@ def kalkulator():
 
     conn = polacz()
     kursor = conn.cursor()
-    kursor.execute("""SELECT * FROM okw;""")
-    okw = kursor.fetchall()
+    #Do wyświetlenia okręgów wyborczych.
     kursor.execute("SELECT * FROM okreg_wyborczy ORDER BY idokreg_wyborczy;")
     okregi = kursor.fetchall()
+    #widok do logowania dla OKW
     kursor.execute("SELECT * FROM okw;")
     okw = kursor.fetchall()
     conn.close()
+    #render_template pobiera jako argumenty szblon i argumeny do których można się w nim odnosić.
     return render_template('kalkulator.html', form=form, okregi=okregi, okw=okw)
-
+#Konstrukcja URL cd.
 @app.route('/wyniki')
+#Funkcja generuje widok wyników PKW i wylicza frekwencję we wszystkich okręgach.
 def wyniki():
     conn = polacz()
     kursor = conn.cursor()
@@ -47,7 +52,7 @@ def wyniki():
     conn.close()
     return render_template('wyniki.html',okregi=okregi, frekwencja=frekwencja)
 
-
+#Konstrukcja URL, przekazanie argumentu liczbowego do funkcji przy wywołaniu np. url_for(menu_obwod, wartosc)
 @app.route('/menu_obwod/<numer>')
 def menu_obwod(numer):
     conn=polacz()
@@ -58,6 +63,7 @@ def menu_obwod(numer):
     return render_template('menu_obwod.html', numer=numer, obwod=obwod)
 
 @app.route('/dodaj_wyniki_obwod/<numer>', methods=['GET', 'POST'])
+#Obsługuje dodanie wyników każdemu kandydatowi w obwodzie.
 def dodaj_wyniki_obwod(numer):
     form = forms.DodajGlosy(request.form)
     if request.method == 'POST' and form.validate():
@@ -77,6 +83,7 @@ def dodaj_wyniki_obwod(numer):
     conn.close()
     return render_template('dodaj_wyniki_obwod.html', form=form, numer=numer, obwod=obwod, protokol=protokol)
 
+#Wzorując się na linku funkcja generuje widok protokołu okw.
 #http://samorzad2014.pkw.gov.pl/321_protokol_komisji_obwodowej/22942/rdw_3
 @app.route('/protokol_obwod/<numer>')
 def protokol_obwod(numer):
@@ -91,6 +98,7 @@ def protokol_obwod(numer):
     kursor.execute("""SELECT idkomitet, nazwa_komitetu, sum(liczba_glosow) FROM protokol_w_obwodzie where idobwod_wyborczy = (%s)
      GROUP BY idkomitet, nazwa_komitetu ORDER BY idkomitet;""",(numer,))
     komitety = kursor.fetchall()
+    #Wyliczenie procentowego wyniku dla kandydatów.
     wyniki = {element[1]: element[5]/frekwencja[1]*100 for element in protokol}
     conn.close()
     return render_template('protokol_obwod.html', numer=numer, obwod=obwod,
@@ -98,6 +106,7 @@ def protokol_obwod(numer):
 
 
 @app.route('/menu_pkw')
+#Wyświetla menu PKW oraz informację o kontroli liczenia głosów
 def menu_pkw():
     conn=polacz()
     kursor=conn.cursor()
@@ -107,6 +116,8 @@ def menu_pkw():
     return render_template('menu_pkw.html',zmiany=zmiany)
 
 @app.route('/okregi',methods=['GET', 'POST'])
+#Ddawanie okręgów wyborczych
+#Funkcje dotyczące okręgów odstają od reszty ponieważ powstawały jako pierwsze i brakowało wzorców.
 def okregi():
     form = forms.DodajOkreg(request.form)
     if request.method == 'POST' and form.validate():
@@ -127,11 +138,13 @@ def okregi():
 
 
 @app.route('/menu_okregi')
+#Widok menu okręgów wyborczych
 def menu_okregi():
     return render_template('menu_okregi.html')
 
 
 @app.route('/zobacz_okregi')
+#Pokazuje wszystkie dodane okręgi
 def zobacz_okregi():
     conn = polacz()
     kursor = conn.cursor()
@@ -143,6 +156,7 @@ def zobacz_okregi():
 
 
 @app.route('/edytuj_okreg',methods=['GET', 'POST'])
+#Funkcja obsługuje edycję okręgów wyborczych.
 def edytuj_okreg():
     form = forms.EdytujOkreg(request.form)
     if request.method == 'POST' and form.validate():
@@ -172,10 +186,12 @@ def edytuj_okreg():
 
 
 @app.route('/kandydaci')
+#Nieużywana funkcja generująca menu kandydatów dla PKW.
 def kandydat_menu():
     return render_template('kandydaci.html')
 
 @app.route('/menu_kandydaci/<numer>')
+#Funkcja obsługuje widok menu kandydatów w okręgu o podanym numerze.
 def menu_kandydaci(numer):
     conn=polacz()
     kursor=conn.cursor()
@@ -185,9 +201,10 @@ def menu_kandydaci(numer):
     return render_template('menu_kandydaci.html', numer=okreg[0], komisarz=okreg[2], lokalizacja=okreg[1])
 
 @app.route('/komitet_menu')
+#Funkcja obsługuje menu komitetu dla interfejsu PKW.
 def komitet_menu():
     return render_template('komitet_menu.html')
-
+#Funkcja obsługuje formularz dodawania komitetów.
 @app.route('/dodaj_komitet', methods=['GET', 'POST'])
 def dodaj_komitet():
     form = forms.DodajKomitet(request.form)
@@ -207,6 +224,7 @@ def dodaj_komitet():
     return render_template('dodaj_komitet.html', form=form, komitety=komitety)
 
 @app.route('/zobacz_komitet')
+#Funkcja generuje widok "zobacz komitet" dla PKW.
 def zobacz_komitet():
     conn = polacz()
     kursor = conn.cursor()
@@ -217,6 +235,7 @@ def zobacz_komitet():
 
 
 @app.route('/edytuj_komitet',methods=['GET', 'POST'])
+#Funkcja obsluguje edycję komitetów przeez formularz
 def edytuj_komitet():
     form = forms.EdytujKomitet(request.form)
     if request.method == 'POST' and form.validate():
@@ -235,6 +254,7 @@ def edytuj_komitet():
     return render_template('edytuj_komitet.html', form=form, komitety=komitety)
 
 @app.route('/dodaj_kandydata/<numer>', methods=['GET', 'POST'])
+#Obsługa dodawania kandydatów w okręgu.
 def dodaj_kandydata(numer):
     form = forms.DodajKandydata(request.form)
     if request.method == 'POST' and form.validate():
@@ -264,6 +284,7 @@ def dodaj_kandydata(numer):
 
 
 @app.route('/zobacz_kandydata/<numer>')
+#Wyświetla kandydatów w okręgu.
 def zobacz_kandydata_okreg(numer):
     conn = polacz()
     kursor = conn.cursor()
@@ -282,6 +303,7 @@ def zobacz_kandydata_okreg(numer):
     return render_template('zobacz_kandydata_okreg.html', kandydaci=kandydaci, numer=okreg[0], lokalizacja=okreg[1])
 
 @app.route('/zobacz_kandydata')
+#Wyświetla wszystkich kandydatów w widoku PKW.
 def zobacz_kandydata():
     conn = polacz()
     kursor = conn.cursor()
@@ -294,6 +316,7 @@ def zobacz_kandydata():
     return render_template('zobacz_kandydata.html', kandydaci=kandydaci)
 
 @app.route('/edytuj_kandydata/<numer>',methods=['GET', 'POST'])
+#Funkcja obsługuje edycję kandydatów w okręgu.
 def edytuj_kandydata(numer):
     form = forms.EdytujKandydata(request.form)
     if request.method == 'POST' and form.validate():
@@ -321,6 +344,7 @@ def edytuj_kandydata(numer):
     return render_template('edytuj_kandydata.html', form=form, komitety=komitety, kandydaci=kandydaci, numer=okreg[0], lokalizacja=okreg[1])
 
 @app.route('/menu_komisarz/<numer>')
+#wyświetla główne menu komisarza.
 def menu_komisarz(numer):
     conn=polacz()
     kursor=conn.cursor()
@@ -329,6 +353,7 @@ def menu_komisarz(numer):
     conn.close()
     return render_template('menu_komisarz.html', numer=okreg[0], komisarz=okreg[2], lokalizacja=okreg[1])
 
+#Funkcja generuje protokół okręgu, wzoruje się na stronie PKW z linku:
 #http://samorzad2014.pkw.gov.pl/357_rady_woj/0/2604
 @app.route('/protokol_okreg/<numer>')
 def protokol_okreg(numer):
@@ -355,6 +380,7 @@ def protokol_okreg(numer):
      komisarz=okreg[2], lokalizacja=okreg[1], wyniki = wyniki)
 
 @app.route('/obwody_menu/<idokregu>')
+#Menu obwodów w danym okręgu.
 def obwody_menu(idokregu):
     conn=polacz()
     kursor=conn.cursor()
@@ -364,6 +390,7 @@ def obwody_menu(idokregu):
     return render_template('obwody_menu.html', numer=okreg[0], komisarz=okreg[2], lokalizacja=okreg[1])
 
 @app.route('/dodaj_obwod/<idokregu>', methods=['GET', 'POST'])
+#Dodawanie obwodów.
 def dodaj_obwod(idokregu):
     form = forms.DodajObwod(request.form)
     if request.method == 'POST' and form.validate():
@@ -379,8 +406,6 @@ def dodaj_obwod(idokregu):
     kursor=conn.cursor()
     kursor.execute("""SELECT * FROM okreg_wyborczy WHERE idokreg_wyborczy = (%s);""",(idokregu,))
     okreg = kursor.fetchone()
-    # kursor.execute("""SELECT * FROM obwod_wyborczy WHERE idokreg_wyborczy = (%s) ORDER BY idobwod_wyborczy;""",(idokregu,))
-    # obwody = kursor.fetchall()
     kursor.execute("""SELECT obw.idobwod_wyborczy, obw.lokalizacja, czk.idczlonek_komisji, 
         czk.imie, czk.nazwisko, czk.afiliacja FROM czlonek_komisji czk
         inner join  komisja k on k.idczlonek_komisji=czk.idczlonek_komisji
@@ -392,6 +417,7 @@ def dodaj_obwod(idokregu):
     return render_template('dodaj_obwod.html',form=form, obwody=obwody, numer=okreg[0], komisarz=okreg[2], lokalizacja=okreg[1])
 
 @app.route('/zobacz_obwod/<idokregu>')
+#Przeglądanie obwodów w okręgu.
 def zobacz_obwod(idokregu):
     conn=polacz()
     kursor=conn.cursor()
@@ -410,6 +436,7 @@ def zobacz_obwod(idokregu):
 
 
 @app.route('/edytuj_obwod/<idokregu>', methods=['GET', 'POST'])
+#Edycja obwodów w okręgu.
 def edytuj_obwod(idokregu):
     form = forms.EdytujObwod(request.form)
     if request.method == 'POST' and form.validate():
