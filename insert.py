@@ -8,6 +8,12 @@ import pprint
 import random
 import generuj
 
+"""
+Plik zawiera obudowane inserty
+** okreg_wyborczy **, ** komitet **, **komisja** czy **wyborca** (nie istnieje) są zwyczajne i dotyczą jednej encji
+
+"""
+
 def okreg_wyborczy(kursor, nazwa, komisarz):
 	kursor.execute("""INSERT into okreg_wyborczy (Nazwa, Komisarz) values ( %s, %s)""",(nazwa, komisarz))
 
@@ -20,6 +26,9 @@ def czlonek_komisji(kursor, imie, nazwisko, afiliacja):
 	idczlonek_komisji=kursor.fetchone()
 	return idczlonek_komisji
 
+"""
+**obwod_wyborczy_komisja** wpisuje do tabel obwód, członka komisji i robi z nich komisję korzstając z wyrażenia RETURNING
+"""
 def obwod_wyborczy_komisja(kursor, idokreg, lokalizacja, imie, nazwisko, afiliacja):
 	kursor.execute("""INSERT into obwod_wyborczy (idokreg_wyborczy, lokalizacja) 
 		values ( %s, %s) RETURNING idobwod_wyborczy;""",(idokreg,lokalizacja))
@@ -34,6 +43,11 @@ def obwod_wyborczy_komisja(kursor, idokreg, lokalizacja, imie, nazwisko, afiliac
 def wyborca(kursor, pesel, idobwod, imie, nazwisko):
 	kursor.execute("""INSERT into wyborca (pesel, idobwod_wyborczy, imie, nazwisko) values ( %s, %s, %s, %s)""",(pesel, idobwod, imie, nazwisko))
 
+
+"""
+** kandydat**  jest wpisywany do tabeli kandydat, lista oraz kandydat_w_okregu. Dokonuje się także dopisanie 
+do wszystkich obwodów w okręgu, dlatego najpierw trzeba wpisać wszystkie obwody, żeby poprawnie dodać wszystkich kandydatów
+"""
 def kandydat(kursor, idkomitet, imie, nazwisko, numer):
 	kursor.execute("""INSERT into kandydat (imie, nazwisko) values (%s, %s) RETURNING idkandydat;""",(imie, nazwisko))
 	idkandydat=kursor.fetchone()
@@ -49,9 +63,6 @@ def kandydat(kursor, idkomitet, imie, nazwisko, numer):
 def komisja(kursor,  idczlonek_komisji,  idobwod_wyborczy):
 	kursor.execute("""INSERT into sklad_komisji (idczlonek_komisji,  idobwod_wyborczy) values ( %s, %s)""",(idczlonek_komisji,  idobwod_wyborczy))
 
-# def kandydat_w_okregu (kursor, idKandydat, idokreg_wyborczy, liczba_glosow):
-	# kursor.execute("""INSERT into obwod_wyborczy (idKandydat, idokreg_wyborczy, liczba_glosow) values ( %s, %s, %s)""",(idKandydat, idokreg_wyborczy, liczba_glosow))
-
 def kandydat_w_obwodzie (kursor, idKandydat, idobwod_wyborczy, liczba_glosow):
 	kursor.execute("""UPDATE kandydat_w_obwodzie set (liczba_glosow) = (%s)
 		WHERE idkandydat = (%s) and idobwod_wyborczy = (%s) """,(liczba_glosow, idKandydat, idobwod_wyborczy))
@@ -60,11 +71,4 @@ def glosy_w_okregu(kursor, idokreg):
 	kursor.execute("""SELECT * FROM policz_glosy_w_okregu(%s);""",(idokreg,))
 
 
-
-# INSERT INTO kandydat_w_okregu (idKandydat, idokreg_wyborczy, liczba_glosow)
- #        VALUES (select idKandydat from kandydat_w_obwodzie where idobwod_wyborczy in 
- #          {select idobwod_wyborczy from obwod_wyborczy where idokreg_wyborczy=idokreg}, idokreg, 
- #          {select sum(liczba_glosow) from kandydat_w_obwodzie where idkandydat in 
- #          {select idKandydat from kandydat_w_obwodzie where idobwod_wyborczy in 
- #          {select idobwod_wyborczy from obwod_wyborczy where idokreg_wyborczy=idokreg}}});
 

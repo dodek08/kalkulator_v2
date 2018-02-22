@@ -2,16 +2,12 @@ from flask_wtf import FlaskForm, Form
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, widgets, SelectMultipleField
 from wtforms.validators import DataRequired, Optional
 
-class MultiCheckboxField(SelectMultipleField):
-    widget = widgets.ListWidget(prefix_label=False)
-    option_widget = widgets.CheckboxInput()
+"""
+Wszystkie formularze używane w aplikacji.
+składnia:
+nazwa = TypPola('Opis w template', validators=[Obowiązkowy/Nieobowiązkowy])
 
-class SimpleForm(Form):
-    string_of_files = ['one\r\ntwo\r\nthree\r\n']
-    list_of_files = string_of_files[0].split()
-    # create a list of value/description tuples
-    files = [(x, x) for x in list_of_files]
-    example = MultiCheckboxField('Label', choices=files)
+"""
 
 class DodajOkreg(FlaskForm):
     lokalizacja = StringField('Lokalizacja', validators=[DataRequired()])

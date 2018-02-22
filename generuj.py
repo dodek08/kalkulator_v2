@@ -1,6 +1,14 @@
 
 # -*- coding: UTF-8 -*-
 
+"""
+funkcje słuzące do generacji imion i nazwisk potrzebnych do zapełnienia bazy danych
+** imie ** - wykorzystano 20 imion męskich oraz 20 imion żeńskich najczęściej występujących w Polsce, 
+imiona postaci z Korony Królów, ulubione imiona autora
+** nazwisko ** wykorzystano nieodmienne nazwiska sportowców, znajomych oraz ministrów z III RP
+** pesel ** ubogi generator peseli dla niestworzonej tabeli
+"""
+
 import random
 
 def imie():

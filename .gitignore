@@ -2,3 +2,5 @@ __pycache__
 *.sql
 kalkulator_v2/
 kalkulatorv2_flask/
+docs/
+kalkulator_flask/
